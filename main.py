@@ -36,33 +36,35 @@ def encrypt(public_key: str, secret_value: str) -> str:
 
 
 if ENVIRONMENT != "REPO":
-    env_exists = False
     logger.info(f'Fetching repository information for {GITHUB_REPO}')
     """
     Repository id is required for public key generation
     """
     repoId = api.repos.get().id
-    environments_response = api.repos.get_all_environments()
-    if(environments_response.total_count > 0):
-        for env in environments_response.environments:
-            if( env.name == ENVIRONMENT ):
-                env_exists=True
-        msg = "exists" if env_exists else "doesn't exist"
-        logger.info(f'{ENVIRONMENT} {msg}.')
-    else:
-        logger.info(f'Creating new environment {ENVIRONMENT}')
-        api.repos.create_or_update_environment(ENVIRONMENT)
-        logger.info(f'Created environment {ENVIRONMENT}')
-    
+    # env_exists = False
+    # environments_response = api.repos.get_all_environments()
+    # if(environments_response.total_count > 0):
+    #     for env in environments_response.environments:
+    #         if( env.name == ENVIRONMENT ):
+    #             env_exists=True
+    #     msg = "exists" if env_exists else "doesn't exist"
+    #     logger.info(f'{ENVIRONMENT} {msg}.')
+    # else:
+    logger.info(f'Creating/Updating new environment {ENVIRONMENT}')
+    api.repos.create_or_update_environment(ENVIRONMENT)
+    logger.info(f'Created/Updated environment {ENVIRONMENT}')
+
     logger.info(f'Fetching environment public key for {ENVIRONMENT}')
     public_key= api.actions.get_environment_public_key(repoId, ENVIRONMENT)
-    #api.actions.create_or_update_environment_secret(repository_id, environment_name, secret_name, encrypted_value: str = None, key_id: str = None)
     for key in data.keys(): 
         encrypted_value=encrypt(public_key.key,data[key])
         api.actions.create_or_update_environment_secret(repoId, ENVIRONMENT, key, encrypted_value, public_key.key_id)
 else:
     logger.info(f'Adding repository secrets')
-    #api.actions.get_repo_public_key()
-    #api.actions.create_or_update_repo_secret(secret_name, encrypted_value: str = None, key_id: str = None)
-    
-    
+    public_key=api.actions.get_repo_public_key()
+    for key in data.keys(): 
+        encrypted_value=encrypt(public_key.key,data[key])
+        logger.info(f'Adding repository secret {key}')
+        api.actions.create_or_update_repo_secret(key, encrypted_value, public_key.key_id)    
+        logger.info(f'Successfully added repository secret {key}')
+
