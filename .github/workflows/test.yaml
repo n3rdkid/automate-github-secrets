@@ -8,6 +8,7 @@ on:
 jobs:
   check_secrets:
     runs-on: ubuntu-latest
+    environment : DEV
     steps:
     - name : Lock the secrets in a dungeon and throw away the key
       run: |
@@ -18,5 +19,7 @@ jobs:
           REPO_B=${{ secrets.REPO_B}}
         " >> dungeon.env
         
-    - name : Ooops!!! The secrets ain't a secret no more
-      run: cat dungeon.env
+    - name : Oops!!! The secrets ain't a secret no more
+      run: |
+        echo dungeon.env
+
