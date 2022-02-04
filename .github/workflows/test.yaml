@@ -2,7 +2,7 @@ name: YO!!! WHY YOU LOOKING INTO OTHER PEOPLE'S SECRETS
 on:
   push:
     branches:
-      master
+     - master
   workflow_dispatch:
   
 jobs:
