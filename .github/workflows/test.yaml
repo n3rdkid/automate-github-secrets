@@ -19,12 +19,11 @@ jobs:
           B=${{ secrets.B }}
           REPO_A=${{ secrets.REPO_A}}
           REPO_B=${{ secrets.REPO_B}}
-        " >> dungeon.env
+        " >> dungeon.txt
         
     - name : Oops!!! The secrets ain't a secret no more
       run: |
         echo "😛 it's a prank, the camera is in my laptop"
-        ls
 
-    - name : Legend has it, the seeker shall always find what s/he seeks
+    - name : Legend has it, thou shall always find what thou seeks
       uses: stefanzweifel/git-auto-commit-action@v4
