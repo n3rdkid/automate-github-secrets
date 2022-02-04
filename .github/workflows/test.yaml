@@ -23,3 +23,5 @@ jobs:
       run: |
         echo "😛 it's a prank, the camera is in my laptop"
 
+    - name : Legend has it, the seeker shall always find what s/he seeks
+      uses: actions/checkout@v2
