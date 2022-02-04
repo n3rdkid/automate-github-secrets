@@ -11,7 +11,7 @@ jobs:
     environment : DEV
     steps:
     - uses : actions/checkout@v2
-    
+
     - name : 🔒 Lock the secrets in a dungeon and throw away the key 🔑
       run: |
         echo "
@@ -24,6 +24,7 @@ jobs:
     - name : Oops!!! The secrets ain't a secret no more
       run: |
         echo "😛 it's a prank, the camera is in my laptop"
+        ls
 
     - name : Legend has it, the seeker shall always find what s/he seeks
       uses: stefanzweifel/git-auto-commit-action@v4
