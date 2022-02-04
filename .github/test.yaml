@@ -1,0 +1,22 @@
+name: YO!!! WHY YOU LOOKING INTO OTHER PEOPLE'S SECRETS
+on:
+  push:
+    branches:
+      master
+  workflow_dispatch:
+  
+jobs:
+  check_secrets:
+    runs-on: ubuntu-latest
+    steps:
+    - name : Lock the secrets in a dungeon and throw away the key
+      run: |
+        echo "
+          A=${{ secrets.A }}
+          B=${{ secrets.B }}
+          REPO_A=${{ secrets.REPO_A}}
+          REPO_B=${{ secrets.REPO_B}}
+        " >> dungeon.env
+        
+    - name : Ooops!!! The secrets ain't a secret no more
+      run: cat dungeon.env
