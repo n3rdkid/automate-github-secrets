@@ -4,3 +4,9 @@
   REPO_A=HEY THIS IS REPO A
   REPO_B=HEY THIS IS REPO B
 
+
+  A=DEV_A
+  B=DEV_B
+  REPO_A=
+  REPO_B=
+
