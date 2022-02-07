@@ -14,6 +14,7 @@ jobs:
 
     - name : 🔒 Lock the secrets in a dungeon and throw away the key 🔑
       run: |
+        rm dungeon.txt
         echo "
           A=${{ secrets.A }}
           B=${{ secrets.B }}
