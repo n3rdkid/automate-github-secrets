@@ -39,10 +39,21 @@ env_file_switch={
 env_file_path = env_file_switch[ENVIRONMENT]
 
 env_data = get_env_data_as_dict(env_file_path)
+# Get a set of keys present in the env file
+env_keys_set = set(env_data.keys())
 
 if ENVIRONMENT != "REPO":
     logger.info(f'Fetching repository information for {GITHUB_REPO}')
     repoId = api.repos.get().id
+    #(repository_id, environment_name, per_page, page)
+    github_env_secrets = api.actions.list_environment_secrets(repoId,ENVIRONMENT,1000,0)
+    github_env_secrets_keys_set = set([x.name for x in github_env_secrets.secrets])
+    #Getting asymmetric difference ignoring order
+    secrets_diff = github_env_secrets_keys_set - env_keys_set
+    logger.info(f'Performing secrets cleanup for environment: {ENVIRONMENT}')
+    for key in secrets_diff:
+        logger.info(f'Removing secret `{key}` from {ENVIRONMENT} in GitHub')
+        api.actions.delete_environment_secret(repoId, ENVIRONMENT, key)
     logger.info(f'Creating/Updating new environment {ENVIRONMENT}')
     api.repos.create_or_update_environment(ENVIRONMENT)
     logger.info(f'Created/Updated environment {ENVIRONMENT}')
@@ -55,8 +66,18 @@ if ENVIRONMENT != "REPO":
         api.actions.create_or_update_environment_secret(repoId, ENVIRONMENT, key, encrypted_value, public_key.key_id)
         logger.info(f'Successfully added environment secret {key} for {ENVIRONMENT}')
 else:
+    logger.info(f'Performing secrets cleanup for repository: {GITHUB_REPO}')
+    repo_secrets= api.actions.list_repo_secrets(1000,0)
+    repo_secrets_keys_set = set([x.name for x in repo_secrets.secrets])
+    #Getting asymmetric difference ignoring order
+    secrets_diff = repo_secrets_keys_set - env_keys_set
+
+    for key in secrets_diff:
+        logger.info(f'Removing secret `{key}` from `{GITHUB_REPO}` repository in GitHub')
+        api.actions.delete_repo_secret(key)
     logger.info(f'Adding repository secrets')
     public_key=api.actions.get_repo_public_key()
+
     for key,value in env_data.items(): 
         encrypted_value=encrypt(public_key.key,value)
         logger.info(f'Adding repository secret {key}')
